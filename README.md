@@ -58,6 +58,10 @@ The available keys within a template are listed below. Along with each key, it i
 builders (REQUIRED):
 ```
 is an array of one or more objects that defines the builders that will be used to create machine images for this template, and configures each of those builders. For more information on how to define and configure a builder, read the sub-section on configuring builders in templates.
+
+Melhores práticas:
+    - nao ter um ami-id hardcoded, utilizar source_ami_filter com owner confiável, sendo assim não terá impacto em uma mudanca de region, alem de utilizar a mais recente. Pulando assim, problemas de seguranca.
+    - utilizar TAG
 ```
 
 description (optional):
@@ -72,7 +76,7 @@ is a string that has a minimum Packer version that is required to parse the temp
 
 post-processors (optional):
 ```
-is an array of one or more objects that defines the various post-processing steps to take with the built images. If not specified, then no post-processing will be done. For more information on what post-processors do and how they're defined, read the sub-section on configuring post-processors in templates.
+is an array of one or more objects that defines the various post-processing steps to take with the built images. If not specified, then no post-processing will be done.  Post-processors are optional, and they can be used to upload artifacts, re-package, or more.
 ```
 
 provisioners (optional):
@@ -83,6 +87,15 @@ is an array of one or more objects that defines the provisioners that will be us
 variables (optional):
 ```
 is an object of one or more key/value strings that defines user variables contained in the template. If it is not specified, then no variables are defined. For more information on how to define and use user variables, read the sub-section on user variables in templates.
+
+Pode ser utilizado um bloco variables:
+{
+  "variables": {
+    "my_secret": "{{ vault `/secret/data/hello` `foo`}}"
+  }
+}
+
+https://www.packer.io/docs/templates/legacy_json_templates/user-variables
 ```
 
 comments (optional):
@@ -115,4 +128,11 @@ Legenda: $PWD:/app, copia o que esta neste projeto para dentro de /app sem a nec
 Para ter autocomplete:
 ```
 packer -autocomplete-install
+```
+
+Troubleshooting:
+```
+packer build -debug
+PACKER_LOG=1
+-on-error=ask
 ```
